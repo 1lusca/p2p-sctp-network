@@ -30,11 +30,13 @@ Vamos instalar o Docker no sistema e subir 3 containers rodando Ubuntu
 
 6. ```apt-cache policy docker-ce```
 
-7. ```docker search ubuntu```
+7. ```apt-get install docker```
 
-8. ```docker pull ubuntu```
+8. ```docker search ubuntu```
 
-9. ```docker run -it ubuntu```
+9. ```docker pull ubuntu```
+
+10. ```docker run -it ubuntu```
 
 
 ### Run
