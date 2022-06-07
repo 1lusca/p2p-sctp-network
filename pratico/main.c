@@ -1,14 +1,13 @@
-/*
- * Compile:
- *
- *   gcc sctptest.c -o server -lsctp -Wall
- *   ln -s server client
- *
- * Invoke:
- *
- *   ./client
- *   ./server
- */
+
+// Created by 1lusca - Lucas Schneider
+// schneider.lusca@gmail.com
+
+// Implementação de uma rede p2p utilizando o protocolo SCTP
+// Trabalho do Grau B - Redes de Computadores I
+// Universidade do Vale do Rio dos Sinos
+// https://github.com/1lusca/p2p-sctp-network
+
+// June, 2022
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,12 +24,8 @@
 #define MY_PORT_NUM 6000
 #define SIZE 1024
 
-static void die(const char *s) {
-        perror(s);
-        exit(1);
-}
-
 static void server(void) {
+
         int listen_fd, conn_fd, flags, ret, in;
         struct sctp_sndrcvinfo sndrcvinfo;
         struct sockaddr_in servaddr = {
@@ -45,20 +40,24 @@ static void server(void) {
         };
 
         listen_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_SCTP);
-        if (listen_fd < 0)
-                die("socket");
+        if (listen_fd < 0) {
+                exit(EXIT_FAILURE);
+        }
 
         ret = bind(listen_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-        if (ret < 0)
-                die("bind");
+        if (ret < 0) {
+                exit(EXIT_FAILURE);
+        }
 
         ret = setsockopt(listen_fd, IPPROTO_SCTP, SCTP_INITMSG, &initmsg, sizeof(initmsg));
-        if (ret < 0)
-                die("setsockopt");
+        if (ret < 0) {
+                exit(EXIT_FAILURE);
+        }
 
         ret = listen(listen_fd, initmsg.sinit_max_instreams);
-        if (ret < 0)
-                die("listen");
+        if (ret < 0) {
+                exit(EXIT_FAILURE);
+        }
 
         while(1) {
 
@@ -67,8 +66,10 @@ static void server(void) {
                 fflush(stdout);
 
                 conn_fd = accept(listen_fd, (struct sockaddr *) NULL, NULL);
-                if(conn_fd < 0)
-                        die("accept()");
+                if(conn_fd < 0) {
+                        printf("\nConnection failure\n");
+                        exit(EXIT_FAILURE);
+                }
 
                 printf("\nNew client connected\n");
                 fflush(stdout);
@@ -120,8 +121,6 @@ static void client(void) {
 
         for (int j = 0; j < i; j++) {
 
-
-
               int conn_fd, ret;
 
               struct sockaddr_in servaddr = {
@@ -131,16 +130,19 @@ static void client(void) {
               };
 
               conn_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_SCTP);
-              if (conn_fd < 0)
-                      die("socket()");
+              if (conn_fd < 0) {
+                      exit(EXIT_FAILURE);
+              }
 
               ret = connect(conn_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-              if (ret < 0)
-                      die("connect()");
+              if (ret < 0) {
+                      exit(EXIT_FAILURE);
+              }
 
               ret = sctp_sendmsg(conn_fd, (void *) buffer, strlen(buffer) + 1, NULL, 0, 0, 0, 0, 0, 0 );
-              if (ret < 0)
-                      die("sctp_sendmsg");
+              if (ret < 0) {
+                      exit(EXIT_FAILURE);
+              }
 
               close(conn_fd);
 
